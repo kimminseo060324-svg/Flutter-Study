@@ -61,7 +61,7 @@ void main7() {
   //제일 첫 원소는 0
 
   Idol[2] = '바꾸기'; //2번 인데스값 변경
-  Idol.add = '추가하기0' //리스트에 추가(3번 인덱스값)
+  Idol.add('추가하기0'); //리스트에 추가(3번 인덱스값)
   print(Idol);
 }
 
@@ -69,11 +69,11 @@ void main7() {
 //조건에 맞는 값는 필터링하는 데 사용
 void main8() {
   List<String> Idol = ['아이돌','남자','여자'];
-  
+
   final newlist = Idol.where(
-      (name) => name == '남자'||name == '여자'; //남자, 여자만 유지
+      (name) => name == '남자'||name == '여자' //남자, 여자만 유지
   );
-  
+
   print(newlist);
   print(newlist.toList());
 }
@@ -85,16 +85,16 @@ void main9() {
   final newlist = Idol.map(
           (name) => '모든 $name'
   );
-  
+
   print(newlist.toList());
 }
 
 //9. List - reduce 함수: 값을 순회하면서 쌓아감
 void main10() {
   List<String> Idol = ['아이돌','남자','여자'];
-  
+
   final allmember = Idol.reduce((value,element) => value + ', ' + element);
-  
+
   print(allmember); }
 
 //10. List - fold 함수:reduce와 실행되는 논리는 똑같지만
@@ -102,7 +102,7 @@ void main10() {
 void main11() {
   List<String> Idol = ['아이돌','남자','여자'];
 
-  final allmember = Idol.fold<int>(0, value, element) => value + element.length);
+  final allmember = Idol.fold<int>(0, (value, element) => value + element.length);
 
   print(allmember);
 }
