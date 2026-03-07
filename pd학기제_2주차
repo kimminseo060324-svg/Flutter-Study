@@ -1,0 +1,6 @@
+//1. 기초 문법 - 메인함수, print함수
+void main() {
+  print('hello word');
+}
+
+//2. var를 사용한 변수 선언
