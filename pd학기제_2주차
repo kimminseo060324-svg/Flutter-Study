@@ -1,6 +1,110 @@
 //1. 기초 문법 - 메인함수, print함수
+import 'dart:ffi';
+
 void main() {
   print('hello word');
 }
 
 //2. var를 사용한 변수 선언
+//var 변수명 = 값;
+void main2() {
+  var name = '플러터';
+  print(name);
+
+  //변수값 변경 가능
+  name = '다트';
+  print(name);
+
+  //변수명 중복 안됨
+}
+
+//3. dynamic을 사용한 변수 선언
+void main3() {
+  dynamic name = '플러터';
+  name = 1;
+  print(name);
+  //출력은 1
+}
+
+//4. final/const를 사용한 변수 선언, 변수의 값을 처음 선언 후 변경할 수 없음
+void main4() {
+  final String name = '블랙핑크';
+  name = 'BTS';
+
+  const String name2 = '몰라';
+  name2 = '몰라요';
+  //둘 다 에러 발생
+}
+///final은 런타임, const는 빌드 타임 상수
+///final은 프로그램이 실행되는 도중에 값을 결정해도 괜찮음
+///const는 프로그램이 실행하기도 전에 그 값이 완벽하게 결정나야함
+void main5() {
+  final DateTime now = DateTime.now();
+  print(now);
+}
+
+void main6() {
+  const DateTime now = DateTime.now();
+  print(now);
+}
+
+///5. 변수 타입
+///String - 문자열
+///int - 정수
+///double - 실수
+///bool - 불리언 (true,false)
+
+//6.List 타입
+void main7() {
+  //리스트에 넣을 타입을 <>사이에 명시할 수 있음
+  List<String> Idol = ['아이돌','여자','남자'];
+  //제일 첫 원소는 0
+
+  Idol[2] = '바꾸기'; //2번 인데스값 변경
+  Idol.add = '추가하기0' //리스트에 추가(3번 인덱스값)
+  print(Idol);
+}
+
+//7. List - where() 함수: List에 있는 값들을 순서대로 순회하면서 특정
+//조건에 맞는 값는 필터링하는 데 사용
+void main8() {
+  List<String> Idol = ['아이돌','남자','여자'];
+  
+  final newlist = Idol.where(
+      (name) => name == '남자'||name == '여자'; //남자, 여자만 유지
+  );
+  
+  print(newlist);
+  print(newlist.toList());
+}
+
+//8. List - map 함수: 순회하면서 값 변경
+void main9() {
+  List<String> Idol = ['아이돌','남자','여자'];
+
+  final newlist = Idol.map(
+          (name) => '모든 $name'
+  );
+  
+  print(newlist.toList());
+}
+
+//9. List - reduce 함수: 값을 순회하면서 쌓아감
+void main10() {
+  List<String> Idol = ['아이돌','남자','여자'];
+  
+  final allmember = Idol.reduce((value,element) => value + ', ' + element);
+  
+  print(allmember); }
+
+//10. List - fold 함수:reduce와 실행되는 논리는 똑같지만
+// reduce는 함수가 실행되는 리스트 요소가 같아야 하지만, fold는 어떤 타입이든 반환 가능
+void main11() {
+  List<String> Idol = ['아이돌','남자','여자'];
+
+  final allmember = Idol.fold<int>(0, value, element) => value + element.length);
+
+  print(allmember);
+}
+
+//11. Map 타입 - 58P부터 다시 하기
