@@ -1,0 +1,69 @@
+// 2.8 제네릭
+// 1. 클래스 이름 옆에 <T>를 선언하여 '인스턴스화할 때 타입을 입력받겠다'는 의사를 밝힙니다.
+class Cache<T> {
+  // 2. 외부에서 받아온 데이터를 저장할 변수입니다.
+  // 어떤 타입이 올지 모르니 클래스에서 선언한 제네릭 타입 T를 사용합니다.
+  final T data;
+
+  // 3. 생성자를 통해 data 변수를 초기화합니다.
+  // 파라미터 값이 반드시 존재해야 하므로 'required' 키워드를 사용합니다.
+  Cache({
+    required this.data,
+  });
+}
+
+void main() {
+  // 4. 클래스를 인스턴스화할 때 < > 사이에 구체적인 타입(여기선 List<int>)을 작성합니다.
+  // 이제 이 cache 객체 내부의 'data' 변수는 자동으로 List<int> 타입이 됩니다.
+  final cache = Cache<List<int>>(
+    data: [1, 2, 3],
+  );
+
+  // 5. cache.data는 List<int>이므로 리스트 전용 메서드인 reduce()를 바로 사용할 수 있습니다.
+  // 제네릭 덕분에 타입 캐스팅(as List) 없이도 안전하게 코드를 짤 수 있습니다.
+  print(cache.data.reduce((value, element) => value + element));
+}
+
+// 2.9 스태틱
+class Counter {
+  // 1. [static 변수] 모든 인스턴스가 공유할 정수형 변수 'i'를 선언하고 0으로 초기화합니다.
+  // 이 변수는 클래스 자체에 귀속되므로 딱 하나만 존재하게 됩니다.
+  static int i = 0;
+
+  // 2. [생성자] 클래스가 인스턴스화될 때마다 실행되는 함수입니다.
+  Counter() {
+    // 3. 공유 변수 'i'의 값을 1 증가시킵니다.
+    i++;
+
+    // 4. 현재 'i'의 값을 출력합니다.
+    // 인스턴스가 새로 생길 때마다 'i'는 초기화되지 않고 계속 누적됩니다.
+    print(i);
+  }
+}
+
+// 2.10 캐스케이드 연산자
+// 1. 테스트를 위한 Idol 클래스를 정의합니다.
+class Idol {
+  final String name;
+  final int membersCount;
+
+  Idol(this.name, this.membersCount);
+
+  // 2. 이름을 출력하는 메서드를 만듭니다.
+  void sayName() {
+    print('저희 그룹 이름은 ${this.name}입니다.');
+  }
+
+  // 3. 멤버 수를 출력하는 메서드를 만듭니다.
+  void sayMembersCount() {
+    print('저희 그룹은 ${this.membersCount}명입니다.');
+  }
+}
+
+void main3() {
+  // 4. 캐스케이드 연산자(..)를 사용하여 인스턴스 생성과 메서드 호출을 한 번에 처리합니다.
+  // 이 연산자를 사용하면 메서드가 실행된 후에도 '객체 자신'을 다시 반환하므로 연속 호출이 가능합니다.
+  Idol blackpink = Idol('블랙핑크', 4)
+    ..sayName()           // 세미콜론(;) 없이 바로 ..를 붙여 메서드 실행
+    ..sayMembersCount();  // 마지막 호출이 끝난 후에만 세미콜론(;)으로 문장을 마칩니다.
+}
