@@ -1,0 +1,188 @@
+// 동기, 비동기
+// 동기: 요청하고 나서 응답이 올 때까지 더는 코드를 진행하지 못하고 기다렸다가 응답을 받으면 다음 코드 진행
+// 비동기: 요청하고 나서 응답을 받지 않았는데도 대기하지 않고 다음 코드 진행
+
+// 3.2 Future
+// - 미래에 받을 값을 의미하는 비동기 객체
+// - <T>에는 나중에 받을 데이터 타입을 넣음
+Future<String> name;   // 나중에 String 값 받을 예정
+Future<int> number;   // 나중에 int 값 받을 예정
+Future<bool> isOpened; // 나중에 bool 값 받을 예정
+
+void main() {
+  // 함수 실행 (비동기 동작 확인용)
+  addNumbers(1, 1);
+}
+
+// 두 숫자를 더하는 함수 (비동기 처리 포함)
+void addNumbers(int number1, int number2) {
+
+  // 1. 계산 시작 메시지 먼저 출력 (동기 코드)
+  print('$number1 + $number2 계산 시작!');
+
+  // 2. Future.delayed
+  // - 일정 시간 뒤에 실행할 코드를 예약하는 함수
+  // - Duration으로 지연 시간 설정
+  // - 두 번째 인자로 실행할 콜백 함수 작성
+  Future.delayed(Duration(seconds: 3), () {
+
+    // 4. 3초 후 실행되는 부분 (비동기 코드)
+    // - 실제 덧셈 결과 출력
+    print('$number1 + $number2 = ${number1 + number2}');
+  });
+
+  // 3. 아래 코드는 기다리지 않고 바로 실행됨 (비동기 특징)
+  print('$number1 + $number2 코드 실행 끝');
+}
+
+// 3.3 async와 await
+// 프로그램 시작 함수
+void main2() {
+
+  // 비동기 함수 호출
+  addNumbers(1,1);
+}
+
+// Future<void>
+// - 비동기 함수라는 의미
+// - 반환값은 없지만 (void), Future 형태로 결과를 나중에 반환
+
+// async 키워드
+// - 함수 내부에서 await를 사용하기 위해 필요
+Future<void> addNumbers2(int number1, int number2) async {
+
+  // 1. 계산 시작 메시지 출력 (동기 코드)
+  print('$number1 + $number2 계산 시작!');
+
+  // 2. await + Future.delayed
+  // - 지정한 시간(3초) 동안 "기다린 후" 아래 코드 실행
+  // - await를 쓰면 이 줄이 끝날 때까지 다음 코드로 안 넘어감
+  await Future.delayed(Duration(seconds: 3), () {
+
+    // 3. 3초 후 실행 (비동기지만 await 때문에 순서 보장됨)
+    print('$number1 + $number2 = ${number1 + number2}');
+  });
+
+  // 4. 위 await가 끝난 후 실행됨
+  // → 즉, 결과 출력 후에 실행됨
+  print('$number1 + $number2 코드 실행 끝');
+}
+
+// 3.3.1 결괏값 반환받기
+void main3() async {
+  final result = await addNumbers3(1,1);
+  print('결과값 $result'); // 일반 함수와 동일하게 반환값을 받을 수 있음
+  final result2 = await addNumbers2(2,2);
+  print('결괏값 $result2');
+}
+
+Future<int> addNumbers3(int number1, int number2) async {
+  print('$number1 + $number2 계산 시작!');
+
+  await Future.delayed(Duration(seconds: 3), (){
+    print('$number1 + $number2 = ${number1 + number2}');
+  });
+
+  print('$number1 + $number2 코드 실행 끝');
+
+  return number1 + number2;
+}
+
+// 3.4.1 스트림 기본 사용법
+import 'dart:async';
+// StreamController, Stream 같은 비동기 기능을 쓰기 위해 필요한 라이브러리
+
+void main4() {
+
+  // 1. StreamController 생성 (데이터를 관리하는 역할)
+  final controller = StreamController();
+  // 데이터를 넣는 역할(add) + 흐름을 제어하는 중심 객체
+
+  // 2. controller에서 stream(데이터 흐름) 가져오기
+  final stream = controller.stream;
+  // controller에 들어오는 데이터들이 지나가는 '통로'
+  // 우리는 이 stream을 통해 데이터를 "읽기"만 할 수 있음
+
+  // 3. stream을 구독(listen)
+  // → 데이터가 들어올 때마다 실행할 함수 작성
+  final listener = stream.listen((value) {
+    // value: stream으로 들어온 데이터
+    // 데이터가 add될 때마다 이 코드가 자동 실행됨
+    print(value);
+  });
+  // listen은 "이벤트 감지기"라고 생각하면 쉬움
+
+  // 4. stream에 데이터 넣기 (이때마다 listen이 실행됨)
+  controller.sink.add(1);
+  // 1이 stream으로 들어감 → listen 실행 → print(1)
+  controller.sink.add(2);
+  controller.sink.add(3);
+  controller.sink.add(4);
+}
+
+// 3.4.2 브로드캐스트 스트림
+import 'dart:async';
+// 비동기 처리와 Stream 관련 기능을 사용하기 위한 라이브러리
+
+void main5() {
+
+  // 1. StreamController 생성 (데이터를 넣고 관리하는 역할)
+  final controller = StreamController();
+
+  // 2. Broadcast Stream 생성
+  final stream = controller.stream.asBroadcastStream();
+  // 기본 stream은 listen 1번만 가능
+  // asBroadcastStream()을 쓰면 여러 번 listen 가능 (핵심 포인트)
+
+  // 3. 첫 번째 구독자 (listener 1)
+  final streamListener1 = stream.listen((val) {
+    print('listening 1');
+    print(val);
+  });
+  // 데이터가 들어오면 "listening 1" + 값 출력
+
+  // 4. 두 번째 구독자 (listener 2)
+  final streamListener2 = stream.listen((val) {
+    print('listening 2');
+    print(val);
+  });
+  // 같은 데이터를 동시에 받음 (멀티 구독)
+
+  // 5. 데이터 넣기
+  controller.sink.add(1);
+  // listener1, listener2 둘 다 실행됨
+  controller.sink.add(2);
+  controller.sink.add(3);
+}
+
+// 3.4.3 함수로 스트림 반환하기
+import 'dart:async';
+
+// Stream을 반환하는 함수는 async*로 선언합니다.
+Stream<String> calculate(int number) async* {
+  // async* : Stream을 만들 때 사용하는 키워드
+  // return 대신 yield를 사용해서 값을 하나씩 보냄
+
+  for (int i = 0; i < 5; i++) {
+    // StreamController의 add()처럼 yield 키워드를 이용해서 값 반환
+    yield 'i=$i';
+    // yield가 실행될 때마다 stream으로 값이 전달됨
+
+    await Future.delayed(Duration(seconds: 1));
+    // 1초 기다린 후 다음 값 실행 (비동기 흐름)
+  }
+}
+
+void playStream() {
+  // StreamController와 마찬가지로 listen() 함수로 콜백 함수 입력
+  calculate(1).listen((val) {
+    // calculate()가 만든 stream을 구독
+    // 값이 들어올 때마다 실행됨
+    print(val);
+  });
+}
+
+void main6() {
+  playStream();
+  // 프로그램 시작 → stream 실행
+}
